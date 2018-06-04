@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const util = require('util');
 const { markdown } = require('markdown');
 const path = require('path');
 const xpath = require('xpath');
@@ -13,10 +14,39 @@ var exports = module.exports = {};
 exports.generateHtmlFromMdFileNode = function (filepath, id, node, onlyFirst = false) {
 
     let content = fs.readFileSync(path.resolve(__dirname, `../src/pages/docs/${filepath}/${id}.md`)).toString();
-    content = content.replace(/`/gm, '"');
+    let title;
+    let title3;
+    //content = content.replace(/`/gm, '"');
     content = markdown.toHTML(content);
 
     const html = new DOMParser().parseFromString(content);
+    const headersTree = new Map();
 
-    return xpath.select(onlyFirst ? `${node}[1]`: node, html);
+    const tree = new Map();
+    let previousHeaderElem;
+
+    function findOrBuildMap(previousElemMap, previousHeaderElem) {
+      if (!previousElemMap) {
+        return new Map();
+      }
+    }
+
+    xpath.select('//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]', html).forEach(headerElem => {
+      previousElemMap
+      previousHeaderElem = headerElem;
+    });
+
+    /*h2.map(el => {
+      title = el.childNodes['0'].data;
+      h3 = xpath.select('/h3', el)
+      h3.map(el3 => {
+        title3 = el3.childNodes['0'].data;
+      })
+      //console.log(el)
+      //console.log(title)
+      //console.log(title3)
+      //console.log('########')
+    })*/
+
+    return;
 };
