@@ -1,0 +1,59 @@
+#!/usr/bin/env node
+
+const htmlFromMdFile = require('./htmlFromMdFile');
+const { lstatSync, readdirSync, readFileSync, writeFile } = require('fs');
+const { resolve } = require('path');
+const jsYaml = require('js-yaml');
+const generatedTitle = '- title: ';
+const generatedPath = '  path: ';
+const generatedItems = '  items: \n';
+const generatedItemsId = '    - id: ';
+const generatedItemsTitle = '      title: ';
+const generatedItemsAnchors = '      anchors: \n';
+const generatedAnchorId = '        - id: ';
+const generatedAnchorTitle = '          title: ';
+const loadedOutline = jsYaml.safeLoad(readFileSync(`${__dirname}/../config/outline.yaml`, 'utf8'));
+
+let yaml = '';
+let h2s = [];
+
+for(var key in loadedOutline) {
+    if (!lstatSync(`${__dirname}/../src/pages/docs/${loadedOutline[key]['path']}`).isDirectory()) {
+        continue;
+    }
+    let files = readdirSync(`${__dirname}/../src/pages/docs/${loadedOutline[key]['path']}`);
+
+    yaml += `${generatedTitle}'${loadedOutline[key]['title']}'\n`;
+    yaml += `${generatedPath}${loadedOutline[key]['path']}\n`;
+    yaml += generatedItems;
+    Object.keys(loadedOutline[key]['items']).forEach(function(itemEntry) {
+
+        if (!files.includes(`${Object.values(loadedOutline[key]['items'][itemEntry])}.md`)) {
+            return;
+        }
+        const id = Object.values(loadedOutline[key]['items'][itemEntry]);
+        yaml += `${generatedItemsId}${id}\n`;
+        let h1 = `${htmlFromMdFile.generateHtmlFromMdFileNode(loadedOutline[key]['path'], id, 'h1', true)}\n`;
+        h1 = h1.replace(/"/g, '\\\"');
+        h1 = h1.replace(/<h1>/, `${generatedItemsTitle}"`);
+        h1 = h1.replace(/<\/h1>/, '"');
+        yaml += h1;
+        let h2 = `${htmlFromMdFile.generateHtmlFromMdFileNode(loadedOutline[key]['path'], id, 'h2')}`;
+
+        if (h2.length > 0) {
+            yaml += generatedItemsAnchors;
+        }
+        h2s = h2.split('<h2>');
+        h2s.forEach(function (el) {
+            if (el.length > 0) {
+                el = el.replace(/\\/, '\\\\');
+                el = `"${el.replace(/"/g, '\\\"')}`;
+                el = el.replace(/<\/h2>,?/, '"\n');
+                yaml += `${generatedAnchorId}${(((el.toLowerCase()).replace(/[^A-Za-z0-9\-\ \_]/g, '')).replace(/ /g, '-'))}\n`;
+                yaml += `${generatedAnchorTitle}${el}`;
+            }
+        });
+    });
+}
+
+writeFile(resolve(__dirname, '../src/pages/docs/nav.yml'), yaml, error => error && console.warn(error));
