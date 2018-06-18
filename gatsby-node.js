@@ -144,8 +144,13 @@ exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
   let nodePath = fileNode.relativePath.replace(".md", "");
   let html = node.internal.content;
   const re = /(\]\((?!http)(?!#)(.*?)\))/gi;
+  const getTitlesRegex = /(#{2,}.*)/gi;
   const localUrls = [];
   let matches;
+
+  console.log('-----');
+  console.log(getTitlesRegex.exec(html));
+  console.log('-----');
 
   while ((matches = re.exec(html))) {
     localUrls.push(matches[2]);
