@@ -124,11 +124,16 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
         };
       }
 
+      let editSubPaths = path.split('/');
+      editSubPaths.shift();
+      const editPath = editSubPaths.length > 1 ? `${editSubPaths.join('/')}.md` : `${editSubPaths[0]}/index.md`;
+
       createPage({
         path,
         component: docTemplate,
         context: {
           path,
+          editPath,
           current,
           prev,
           next,
