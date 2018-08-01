@@ -11,8 +11,10 @@ rm -fr src/pages/images
 
 git clone https://github.com/api-platform/docs.git src/pages/docs
 
-cp -R src/pages/docs/images public/
-cp -R src/pages/docs/images src/pages/
+
+# Uncomment following lines when https://github.com/api-platform/docs/pull/549 is merge
+# cp -R src/pages/docs/images public/
+# cp -R src/pages/docs/images src/pages/
 
 # Generate "nav.yml"
 
