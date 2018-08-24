@@ -16,7 +16,5 @@ bin/check-outline
 bin/generate-nav
 
 # Get the default branch of docs github repository
-
-cd src/pages/docs
-sed -i '/docsBranchName/d' ../../../constants.js
-sed -i "s/});/  docsBranchName: `git rev-parse --abbrev-ref HEAD`,\n});/g" ../../../constants.js
+sed -i '/docsBranchName/d' constants.js
+sed -i "s/});/  docsBranchName: `git rev-parse --abbrev-ref HEAD`,\n});/g" constants.js
