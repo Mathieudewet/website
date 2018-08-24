@@ -128,6 +128,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
       editSubPaths.shift();
       const editPath = editSubPaths.length > 1 ? `${editSubPaths.join('/')}.md` : `${editSubPaths[0]}/index.md`;
 
+      // Remove trailing slashs
       prev.path = prev.path && prev.path.replace(/\/index$/, '');
       next.path = next.path && next.path.replace(/\/index$/, '');
 

@@ -12,3 +12,5 @@ before_install:
 script:
   - yarn lint
   - yarn gatsby build
+  - ls -la
+  - ls -la constants.js
