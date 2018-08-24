@@ -15,8 +15,7 @@ git clone https://github.com/api-platform/docs.git src/pages/docs
 bin/check-outline
 bin/generate-nav
 
-pwd
-ls -la
 # Get the default branch of docs github repository
-sed -i '/docsBranchName/d' constants.js
-sed -i "s/});/  docsBranchName: `git rev-parse --abbrev-ref HEAD`,\n});/g" constants.js
+cd src/pages/docs
+sed -i '/docsBranchName/d' ../../../constants.js
+sed -i "s/});/  docsBranchName: `git rev-parse --abbrev-ref HEAD`,\n});/g" ../../../constants.js
